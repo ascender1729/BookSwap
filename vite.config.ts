@@ -1,10 +1,14 @@
-// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import terser from '@rollup/plugin-terser';
+import polyfillNode from 'rollup-plugin-polyfill-node';
 
 // Vite configuration with detailed optimization settings
 export default defineConfig({
+  define: {
+    global: 'window',  // Fix the "global is not defined" error
+  },
+
   // Plugin configuration with React support
   plugins: [
     react({
@@ -12,7 +16,8 @@ export default defineConfig({
       fastRefresh: true,
       // Optimize JSX compilation
       jsxRuntime: 'automatic'
-    })
+    }),
+    polyfillNode() // Polyfill for Node.js modules like "stream"
   ],
 
   // Build configuration for production
@@ -112,7 +117,8 @@ export default defineConfig({
     mainFields: ['module', 'jsnext:main', 'jsnext'],
     // Configure module aliases if needed
     alias: {
-      '@': '/src'
+      '@': '/src',
+      'stream': 'stream-browserify'  // Fix for "Module stream has been externalized" error
     }
   }
 });
